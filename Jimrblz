@@ -1,0 +1,82 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Create the GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "BrainrotGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Create the main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 150)
+frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+-- Title label
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -30, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Speed Gui"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.Font = Enum.Font.SourceSansBold
+title.Parent = frame
+
+-- X (close) button
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -30, 0, 0)
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(255, 255, 255)
+close.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+close.Font = Enum.Font.SourceSansBold
+close.TextScaled = true
+close.Parent = frame
+
+close.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+-- Speed toggle button
+local speedButton = Instance.new("TextButton")
+speedButton.Size = UDim2.new(0, 200, 0, 50)
+speedButton.Position = UDim2.new(0.5, -100, 0.5, -25)
+speedButton.Text = "Speed: OFF"
+speedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+speedButton.Font = Enum.Font.SourceSansBold
+speedButton.TextScaled = true
+speedButton.Parent = frame
+
+-- Toggle logic
+local isSpeedOn = false
+local normalSpeed = 16
+local fastSpeed = 125
+
+speedButton.MouseButton1Click:Connect(function()
+	isSpeedOn = not isSpeedOn
+	if isSpeedOn then
+		speedButton.Text = "Speed: ON"
+		humanoid.WalkSpeed = fastSpeed
+	else
+		speedButton.Text = "Speed: OFF"
+		humanoid.WalkSpeed = normalSpeed
+	end
+end)
+
+-- Ensure toggle stays after respawn
+player.CharacterAdded:Connect(function(char)
+	character = char
+	humanoid = character:WaitForChild("Humanoid")
+	if isSpeedOn then
+		humanoid.WalkSpeed = fastSpeed
+	else
+		humanoid.WalkSpeed = normalSpeed
+	end
+end)
